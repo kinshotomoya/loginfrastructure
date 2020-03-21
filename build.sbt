@@ -9,7 +9,6 @@ scalaVersion := "2.13.1"
 
 libraryDependencies += guice
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test
-libraryDependencies += "jp.t2v" %% "play2-auth" % "0.14.1"
 
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "com.kinsho.controllers._"
