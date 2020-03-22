@@ -13,10 +13,16 @@
   -ログ用のes
 - kibana
 - kafka
+  - fluentd -> kafka -> fluentd -> elasticsearchの流れ（下図参考）
+
+![kafka_fluentd_-_Google_検索](https://user-images.githubusercontent.com/58924623/77252278-1ddae380-6c96-11ea-8436-e409a8fe79b5.png)
+
+
 
 ## 条件
 - playからは、docker logging driverでログを送る
   - docker-logging-driverを使いたいので、playもコンテナ化する
+  
 
 
 ## 今後
