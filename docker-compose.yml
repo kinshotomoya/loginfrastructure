@@ -10,6 +10,15 @@ services:
       - nginxlog:/var/log/nginx
     ports:
       - 80:80
+  fluentd-forwarder:
+    build:
+      context: .
+      dockerfile: Dockerfile_fluentd_forwarder
+    environment:
+      - FLUENTD_CONF=fluent.conf
+    volumes:
+      - nginxlog:/var/log/nginx:ro
+      - ./fluentd/etc/forwarder:/fluentd/etc/forwarder
 
 volumes:
   nginxlog:
