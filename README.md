@@ -15,6 +15,7 @@
 
 ## 条件
 - playからは、docker logging driverでログを送る
+  - docker-logging-driverを使いたいので、playもコンテナ化する
 
 
 ## 今後
