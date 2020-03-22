@@ -12,6 +12,7 @@
   - production用のes
   -ログ用のes
 - kibana
+- kafka
 
 ## 条件
 - playからは、docker logging driverでログを送る
