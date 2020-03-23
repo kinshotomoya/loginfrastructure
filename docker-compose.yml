@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile_play
+      # envでJVMoptionを設定する
   nginx:
     image: nginx:1.17.9
     volumes:
