@@ -1,0 +1,25 @@
+# syntax = docker/dockerfile:experimental
+FROM amazoncorretto:8 as build
+# sbtの設定をyumのリポジトリに書き込んでいる
+RUN curl https://bintray.com/sbt/rpm/rpm | tee /etc/yum.repos.d/bintray-sbt-rpm.repo && yum install -y sbt
+
+COPY ./ /app
+WORKDIR /app
+
+RUN \
+  --mount=type=cache,target=/root/.ivy2 \
+  sbt clean dist
+
+FROM alpine:3.10.1 as unzip
+WORKDIR /tmp
+
+COPY --from=build /app/target/universal /tmp
+RUN apk --update add unzip && unzip -o 'loginfrastructure-*.zip' && rm -f loginfrastructure-*.zip && mv loginfrastructure-* logApp
+
+FROM amazoncorretto:8
+WORKDIR /var/app/play
+COPY --from=unzip /tmp/logApp /var/app/play
+COPY ./docker-entrypoint.sh /usr/local/bin
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+ENTRYPOINT ["docker-entrypoint.sh"]
