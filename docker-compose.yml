@@ -2,10 +2,15 @@ version: "3.0"
 
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile_play
+    image: sbt
+    volumes:
+    - ../loginfrastructure:/app
+    - ./cache/sbt:/root/.sbt
+    - ./cache/ivy2:/root/.ivy2
+    command: "run"
       # envでJVMoptionを設定する
+    ports:
+    - "9000:9000"
   nginx:
     image: nginx:1.17.9
     volumes:
