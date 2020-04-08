@@ -29,6 +29,37 @@ services:
     volumes:
       - nginxlog:/var/log/nginx:ro
       - ./fluentd/etc/forwarder:/fluentd/etc/forwarder
+  log_elasticsearch01:
+    build:
+      context: .
+      dockerfile: Dockerfile_elasticsearch
+    environment:
+      - node.name=es01
+      - cluster.name=es-log-elasticsearch-cluster
+      - discovery.seed_host=es02
+      - cluster.initial_master_nodes=es01,es02
+      # ヒープをロックする設定
+      # FullGCが行われる際に、JVMのヒープ上の全てのページにアクセスする。
+      # ヒープのデータのいくつかを（メモリに足りない部分を）ディスクにスワッピングする（スワップアウト）
+      # スワップアウトをしたデータを、またメモリにスワップインする必要がある
+      # 上記のように、スワップ動作でCPUが大忙しになる（スラッシング）
+      # ヒープをロックすることで、スワッピングを禁止できる
+      # https://www.elastic.co/guide/en/elasticsearch/reference/current/_memory_lock_check.html
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx1024m"
+    ports:
+    - 9200:9200
+  log_elasticsearch02:
+    build:
+      context: .
+      dockerfile: Dockerfile_elasticsearch
+    environment:
+      - node.name=es02
+      - cluster.name=es-log-elasticsearch-cluster
+      - discovery.seed_host=es01
+      - cluster.initial_master_nodes=es01,es02
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx1024m"
 
 volumes:
   nginxlog:
