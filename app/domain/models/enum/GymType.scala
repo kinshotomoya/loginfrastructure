@@ -6,7 +6,7 @@ sealed abstract class GymType(override val code: String, override val name: Stri
 
 // EnumオブジェクトのCompanion traitを継承している
 // Companion traitは型traitになっており、さらにEnum型のサブクラスしか指定できないような
-// 下限境界が指定されている
+// 上限境界が指定されている
 object GymType extends Enum.Companion[GymType] {
   case object GoldGym extends GymType("goldGym", "ゴールドジム")
   case object AnyTimeGYm extends GymType("anyTimeGym", "エニータイム")

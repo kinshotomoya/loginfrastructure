@@ -6,7 +6,7 @@ trait Enum extends Serializable with Product {
 }
 
 object Enum {
-  // 下限境界を設定する。
+  // 上限境界を設定する。
   // EnumのEにはEnumのサブクラスしか指定できなくなる
   trait Companion[E <: Enum] {
     val member: Seq[E]
