@@ -11,4 +11,3 @@ class GymRepositoryImple extends GymRepository{
     Future.successful(request.value.name)
   }
 }
-
