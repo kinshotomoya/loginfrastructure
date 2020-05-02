@@ -7,7 +7,6 @@ import usecase.models.gym.SearchRequest
 // Tには、Keyword Price Location型が渡ってくるので、抽象化させてTと指定している
 // ValueにはStringBaseを継承した型が入る
 // +Tと共変を指定することで、MysqlSearchRequest[T]のサブクラスも代入できるようになる
-// e.g.
 case class MysqlSearchRequest[+T](column: String, value: T)
 
 object MysqlSearchRequest {
