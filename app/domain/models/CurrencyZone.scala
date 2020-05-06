@@ -9,6 +9,23 @@ abstract class CurrencyZone {
   abstract class AbstractCurrency {
     val amount: Long
     def designation: String
+    class Creature
+    class Animal extends Creature
+    class Dog extends Animal
+    class Cat extends Animal
+    val list: List[Dog] = List(new Dog)
+    val newList: List[Animal] = list.::(new Cat)
+    // ::メソッドの定義は以下のようになっている
+    // def ::[U <: T](elem: U): List[U]
+    // 今回の場合、TはDog型になっており、Uとして引数に渡せるのはDog型のスーパー型(Animal型)のみになる。
+    // CatはAnimal型を継承しているので、当てはまる
+    // list.::(new Cat)が、List[Animal]となる
+    // 仮に、list.::(new Fish)とすると、List[Object]になる。
+    // これは、[U <: T]で、TがDog、FishはAnimal型を継承しておらず、最上階のObject型（全てのclassが継承している型）が
+    // DogとFishの共通のスーパー型になるので、list[Object]になる
+
+
+    List(1, 2, 3).map(x => x.toString)
 
     def + (that: Currency): Currency = make(this.amount + that.amount)
 
