@@ -22,7 +22,7 @@
 ## 条件
 - playからは、docker logging driverでログを送る
   - docker-logging-driverを使いたいので、playもコンテナ化する
-  
+- kubernetesの練習のため、本番はkubernetesにのせる
 
 
 ## 今後
