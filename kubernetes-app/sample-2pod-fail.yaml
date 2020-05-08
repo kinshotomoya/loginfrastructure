@@ -4,6 +4,7 @@ metadata:
   name: sample-2pod-fail
 spec:
   containers:
+    # 同じpod内には、同じportでbindingできない
     - name: nginx-container-112
       image: nginx:1.12
     - name: nginx-container-113
