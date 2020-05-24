@@ -1,0 +1,2 @@
+-XX:+PrintCompilation
+-XX:CompileThreshold=100
