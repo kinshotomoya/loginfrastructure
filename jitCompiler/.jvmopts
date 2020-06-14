@@ -1,4 +1,1 @@
---XX:+PrintCompilation
---XX:CompileThreshold=100
--XX:+PrintFlagsFinal
 -Xmx8G
