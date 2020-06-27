@@ -3,11 +3,11 @@ import scala.annotation.tailrec
 object Test {
   // これをIntでもしたいどうするのか？
   // 型パラメータにして、
-  def findFirst[T](ss: Array[T], key: T, f: T => Boolean): Int = {
+  def findFirst[T](ss: Array[T], key: T, f: (T, T) => Boolean): Int = {
     @tailrec
     def loop(index: Int): Int = {
       if(ss.length < index) -1
-      else if(f(ss(index))) index
+      else if(f(ss(index), key)) index
       else loop(index + 1)
     }
     loop(0)
