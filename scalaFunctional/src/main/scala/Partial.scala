@@ -231,5 +231,17 @@ object Exercise3s10 {
     foldRight(a1, a2)((head: A, tail: List[A]) => Cons(head, tail))
   }
 
+  // exercise3.15
+  // 複数のリストからなるリストを１つのリストにまとめる関数
+  // List(List(1, 2), List(4, 7), List(5, 9)) => List(1, 2, 4, 7, 5, 9)
+  def combineList[A](as: List[List[A]]): List[A] = {
+    as match {
+      case Nil => Nil
+      case Cons(head: List[A], tail: List[List[A]]) => {
+        foldLeft(head, combineList(tail): List[A])((x: List[A], y: A) => foldLeftAppend(List(y), x))
+      }
+    }
+  }
+
 }
 
