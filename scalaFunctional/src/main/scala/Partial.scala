@@ -181,7 +181,7 @@ object Exercise3s10 {
 
   // List(1, 2, 3) => List(3, 2, 1)
   // Cons(3, Cons(2, Cons(1, NIl)))
-  def reverse[A](as: List[A]): List[A] = foldLeft(as, List())((list, head) => Cons(head, list))
+  def reverse[A](as: List[A]): List[A] = foldLeft(as, List(): List[A])((list: List[A], head: A) => Cons(head, list))
   // as = List(1, 2, 3)
   // foldLeft(List(1, 2, 3), List())((List(), 1) => Cons(1, List()))
   // foldLeft(List(2, 3), Cons(1, List()))((Cons(1, List()), 2) => Cons(2, Cons(1, List())))
@@ -190,8 +190,10 @@ object Exercise3s10 {
   // => Cons(3, Cons(2, Cons(1, List())))
 
   // foldLeftを使ってfoldRightを実装する
-  def foldRightTailrec[A, B](as: List[A], z: B)(f: (A, B) => B): B = {
-    
+  // 一回Listを逆転させてから、左から畳みめば、結果的にfoldLeftと同じ挙動になる
+  def foldRightTailrec[A, B](as: List[A], z: B)(f: (B, A) => B): B = {
+    foldLeft(foldLeft(as, List())((list, head) => Cons(head, list)) ,z)(f)
   }
+
 }
 
