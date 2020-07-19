@@ -136,7 +136,7 @@ object Exercise3s8 {
         // f(x, f(x, foldRight(xs, z)(f)))
     }
 
-  foldRight(List(1, 2, 3), Nil: List[Int])(Cons(_, _))
+  foldRight(List(1, 2, 3), Nil: List[Int])(Cons(_: Int, _))
   // 1. Cons(1, Cons(2, Cons(3, Nil)))
 
   def length[A](as: List[A]): Int = {
@@ -161,6 +161,7 @@ object Exercise3s9 {
 
 // List(1, 2, 3), 0
 object Exercise3s10 {
+
   def foldLeft[A, B](as: List[A], z: B)(f: (B, A) => B): B = {
     as match {
       case Nil => z
@@ -191,8 +192,43 @@ object Exercise3s10 {
 
   // foldLeftを使ってfoldRightを実装する
   // 一回Listを逆転させてから、左から畳みめば、結果的にfoldLeftと同じ挙動になる
-  def foldRightTailrec[A, B](as: List[A], z: B)(f: (B, A) => B): B = {
-    foldLeft(foldLeft(as, List())((list, head) => Cons(head, list)) ,z)(f)
+  def foldRightTailrec[A, B](as: List[A], z: B)(f: (A, B) => B): B = {
+    foldLeft(foldLeft(as, Nil: List[A])((list, head) => Cons(head, list)) ,z)(f(_: B, _: A))
+  }
+
+  def foldRight[A, B](as: List[A], z: B)(f: (A, B) => B): B =
+    as match {
+      case Nil => z
+      case Cons(x, xs) => f(x, foldRight(xs, z)(f))
+      // f(x, foldRight(xs, z)(f))
+      // f(x, f(x, foldRight(xs, z)(f)))
+    }
+
+  // foldRightを使って、foldLeftを実装する
+  // List(1, 2, 3) => List(3, 2, 1)
+  // foldRightでreverseを実装する
+  // reverseListを右からたたみ込んで行く
+  def foldLeftWithFoldRight[A, B](as: List[A], z: B)(f: (B, A) => B): B = {
+    // Cons(3, Cons(2, Cons(1. Nil)))が欲しい
+    // foldRightでは、reverseできない！！？？？
+    foldRight(as, Nil: List[A])((x: A, y: List[A]) => Cons(x: A, y: List[A]))
+    z
+  }
+  // List(1, 2, 3)
+  // List(4, 5, 6)
+  // => List(1, 2, 3, 4, 5, 6)
+  // 初期値をマージ先のa2 Listにしておく
+  // a1 Listの先頭から順次a2にまーじされていくので、a2の順番を逆にする必要がある
+  def foldLeftAppend[A](a1: List[A], a2: List[A]): List[A] = {
+    foldLeft(reverse(a1), a2)((a2List, head) => Cons(head, a2List))
+  }
+
+  // List(1, 2, 3)
+  // List(4, 5, 6)
+  // => List(1, 2, 3, 4, 5, 6)
+  // 右からたたみ込んで行くので、3, 2, 1の順番でa2にマージされていく。
+  def foldRightAppend[A](a1: List[A], a2: List[A]): List[A] = {
+    foldRight(a1, a2)((head: A, tail: List[A]) => Cons(head, tail))
   }
 
 }
