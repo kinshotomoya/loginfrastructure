@@ -1,3 +1,5 @@
+import org.checkerframework.checker.units.qual.A
+
 import scala.annotation.tailrec
 
 // 引数の部分的適応
@@ -196,14 +198,6 @@ object Exercise3s10 {
     foldLeft(foldLeft(as, Nil: List[A])((list, head) => Cons(head, list)) ,z)(f(_: B, _: A))
   }
 
-  def foldRight[A, B](as: List[A], z: B)(f: (A, B) => B): B =
-    as match {
-      case Nil => z
-      case Cons(x, xs) => f(x, foldRight(xs, z)(f))
-      // f(x, foldRight(xs, z)(f))
-      // f(x, f(x, foldRight(xs, z)(f)))
-    }
-
   // foldRightを使って、foldLeftを実装する
   // List(1, 2, 3) => List(3, 2, 1)
   // foldRightでreverseを実装する
@@ -229,19 +223,55 @@ object Exercise3s10 {
   // 右からたたみ込んで行くので、3, 2, 1の順番でa2にマージされていく。
   def foldRightAppend[A](a1: List[A], a2: List[A]): List[A] = {
     foldRight(a1, a2)((head: A, tail: List[A]) => Cons(head, tail))
+    // Cons(1, foldRight(List(2, 3), List(4, 5, 6)))
+    // Cons(1, Cons(2, foldRight(List(3), List(4, 5, 6))))
+    // Cons(1, Cons(2, Cons(3, List(4, 5, 6))))
   }
 
   // exercise3.15
   // 複数のリストからなるリストを１つのリストにまとめる関数
   // List(List(1, 2), List(4, 7), List(5, 9)) => List(1, 2, 4, 7, 5, 9)
-  def combineList[A](as: List[List[A]]): List[A] = {
+  def combineListV1[A](as: List[List[A]]): List[A] = {
     as match {
       case Nil => Nil
       case Cons(head: List[A], tail: List[List[A]]) => {
-        foldLeft(head, combineList(tail): List[A])((x: List[A], y: A) => foldLeftAppend(List(y), x))
+        foldLeft(head, combineListV1(tail): List[A])((x: List[A], y: A) => foldLeftAppend(List(y), x))
       }
     }
   }
 
+  def foldRight[A, B](as: List[A], z: B)(f: (A, B) => B): B =
+    as match {
+      case Nil => z
+      case Cons(x, xs) => f(x, foldRight(xs, z)(f))
+      // f(x, foldRight(xs, z)(f))
+      // f(x, f(x, foldRight(xs, z)(f)))
+
+        // combineListV2が呼ばれた際に、以下のような順番で処理される
+        // f (List(1, 2, 3), foldRight(List(List(4, 5, 6), List(7, 8, 9))))
+        // f(List(1, 2, 3), f(List(4, 5, 6), foldRight(List(7, 8, 9), Nil)))
+        // f(List(1, 2, 3), f(List(4, 5, 6), f(List(7, 8, 9), foldRight(Nil, Nil))))
+        // f(List(1, 2, 3), f(List(4, 5, 6), f(List(7, 8, 9), Nil)))
+        // こっから、内側のfunctionから順番に処理される
+        // f: (x: List[A], y: List[A]) => foldRight(x, y)((head, tail) => Cons(head, tail))
+        // f(List(1, 2, 3), f(List(4, 5, 6), Cons(7, foldRight(List(8, 9), Nil))))
+        // f(List(1, 2, 3), f(List(4, 5, 6), Cons(7, Cons(8, foldRight(List(9), Nil)))))
+        // f(List(1, 2, 3), f(List(4, 5, 6), Cons(7, Cons(8, Cons(9, Nil)))))
+        // f(List(1, 2, 3), Cons(4, foldRight(List(5, 6), Cons(7, Cons(8, Cons(9, Nil))))))
+        // f(List(1, 2, 3), Cons(4, Cons(5, foldRight(List(6), Cons(7, Cons(8, Cons(9, Nil)))))))
+        // f(List(1, 2, 3), Cons(4, Cons(5, Cons(6, foldRight(Nil, Cons(7, Cons(8, Cons(9, Nil))))))))
+        // f(List(1, 2, 3), Cons(4, Cons(5, Cons(6, Cons(7, Cons(8, Cons(9, Nil)))))))
+        // Cons(1, foldRight(List(2, 3), Cons(4, Cons(5, Cons(6, Cons(7, Cons(8, Cons(9, Nil))))))))
+        // Cons(1, Cons(2, foldRight(List(3, Cons(4, Cons(5, Cons(6, Cons(7, Cons(8, Cons(9, Nil))))))))))
+        // Cons(1, Cons(2, Cons(3, foldRight(Nil, Cons(4, Cons(5, Cons(6, Cons(7, Cons(8, Cons(9, Nil))))))))))
+        // Cons(1, Cons(2, Cons(3, Cons(4, Cons(5, Cons(6, Cons(7, Cons(8, Cons(9, Nil)))))))))
+    }
+
+  // ex) List(List(1, 2, 3), List(4, 5, 6), List(7, 8, 9)) => List(1, 2, 3, 4, 5, 6, 7, 8, 9)
+  def combineListV2[A](as: List[List[A]]): List[A] = {
+    foldRight(as, Nil: List[A])((x: List[A], y: List[A]) => foldRightAppend(x, y))
+    // foldRight(as, Nil: List[A])((x: List[A], y: List[A]) => foldRight(x, y)((head: A, tail: List[A]) => Cons(head, tail)))
+    // foldRightAppend()
+  }
 }
 
