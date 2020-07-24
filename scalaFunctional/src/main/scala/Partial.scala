@@ -244,8 +244,8 @@ object Exercise3s10 {
     as match {
       case Nil => z
       case Cons(x, xs) => f(x, foldRight(xs, z)(f))
-      // f(x, foldRight(xs, z)(f))
-      // f(x, f(x, foldRight(xs, z)(f)))
+        // f(x, foldRight(xs, z)(f))
+        // f(x, f(x, foldRight(xs, z)(f)))
 
         // combineListV2が呼ばれた際に、以下のような順番で処理される
         // f (List(1, 2, 3), foldRight(List(List(4, 5, 6), List(7, 8, 9))))
@@ -273,5 +273,39 @@ object Exercise3s10 {
     // foldRight(as, Nil: List[A])((x: List[A], y: List[A]) => foldRight(x, y)((head: A, tail: List[A]) => Cons(head, tail)))
     // foldRightAppend()
   }
-}
 
+  // exercise3.16
+  // List(1, 2, 3) => List(2, 3, 4)
+  def addMap(as: List[Int]): List[Int] = {
+    as match {
+      case Nil => Nil
+      case Cons(head, tail) => Cons(head + 1, addMap(tail))
+    }
+  }
+
+  // exercise3.17
+  def convertDoubleToString(as: List[Double]): List[String] = {
+    as match {
+      case Nil => Nil
+      case Cons(head, tail) => Cons(head.toString, convertDoubleToString(tail))
+    }
+  }
+
+  // exercise3.18
+  def map[A, B](as: List[A])(f: A => B): List[B] = {
+    as match {
+      case Nil => Nil
+      case Cons(head, tail) => Cons(f(head), map(tail)(f))
+    }
+  }
+
+  // exercise3.19
+  // List(1, 2, 3, 4, 5) => List(2, 4)
+  def filter[A](as: List[A])(f: A => Boolean): List[A] = {
+    as match {
+      case Nil => Nil
+      case Cons(head, Cons(head2, tail)) if f(head) => Cons(head2, filter(tail)(f))
+      case Cons(head, tail) => Cons(head, filter(tail)(f))
+    }
+  }
+}
