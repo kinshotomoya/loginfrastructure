@@ -1,5 +1,3 @@
-import org.checkerframework.checker.units.qual.A
-
 import scala.annotation.tailrec
 
 // 引数の部分的適応
@@ -208,6 +206,9 @@ object Exercise3s10 {
     foldRight(as, Nil: List[A])((x: A, y: List[A]) => Cons(x: A, y: List[A]))
     z
   }
+
+
+  // exercise3.14
   // List(1, 2, 3)
   // List(4, 5, 6)
   // => List(1, 2, 3, 4, 5, 6)
@@ -217,6 +218,7 @@ object Exercise3s10 {
     foldLeft(reverse(a1), a2)((a2List, head) => Cons(head, a2List))
   }
 
+  // exercise3.14
   // List(1, 2, 3)
   // List(4, 5, 6)
   // => List(1, 2, 3, 4, 5, 6)
@@ -283,6 +285,13 @@ object Exercise3s10 {
     }
   }
 
+  // exercise3.16
+  // List(1, 2, 3) => List(2, 3, 4)
+  // foldRightを使う
+  def addMapViaFoldRight(as: List[Int]): List[Int] = {
+    foldRight(as, Nil: List[Int])((head: Int, tail: List[Int]) => Cons(head + 1, tail))
+  }
+
   // exercise3.17
   def convertDoubleToString(as: List[Double]): List[String] = {
     as match {
@@ -291,12 +300,25 @@ object Exercise3s10 {
     }
   }
 
+  // exercise3.17
+  // foldRightを使う
+  def convertDoubleToStringViaFoldRight(as: List[Double]): List[String] = {
+    foldRight(as, Nil: List[String])((head: Double, tail: List[String]) => Cons(head.toString, tail))
+  }
+
   // exercise3.18
   def map[A, B](as: List[A])(f: A => B): List[B] = {
     as match {
       case Nil => Nil
       case Cons(head, tail) => Cons(f(head), map(tail)(f))
     }
+  }
+
+
+  // exercise3.18
+  // foldRightを使う
+  def mapViaFoldRight[A, B](as: List[A])(f: A => B): List[B] = {
+    foldRight(as, Nil: List[B])((head: A, tail: List[B]) => Cons(f(head), tail))
   }
 
   // exercise3.19
@@ -308,4 +330,33 @@ object Exercise3s10 {
       case Cons(head, tail) => Cons(head, filter(tail)(f))
     }
   }
+
+
+  // exercise3.19
+  // foldRightを使う
+  // List(1, 2, 3, 4) => List(2, 4)
+   def filterViaFoldRight[A](as: List[A])(f: A => Boolean): List[A] = {
+    foldRight(as, Nil: List[A])((x: A, y: List[A]) => if(f(x)) y else Cons(x, y))
+  }
+
+
+  def foldRight[A, B](as: List[A], z: B)(f: (A, B) => B): B =
+    as match {
+      case Nil => z
+      case Cons(x, xs) => f(x, foldRight(xs, z)(f))
+    }
+  // f(1, foldRight(List(2, 3, 4), Nil))
+  // f(1, f(2, foldRight(List(3, 4), Nil)))
+  // f(1, f(2, f(3, foldRight(List(4), Nil)))
+  // f(1, f(2, f(3, f(4, foldRight(Nil, Nil)))))
+  // f(1, f(2, f(3, f(4, Nil))))
+  // f(1, f(2, f(3, Cons(4, Nil))))
+  // f(1, f(2, Cons(4, Nil)))
+  // f(1, Cons(2, Cons(4, Nil)))
+  // Cons(2, Cons(4, Nil))
+
+//  def flatMap[A, B](as: List[A])(f: A => List[B]): List[B] = {
+//
+//  }
+
 }
