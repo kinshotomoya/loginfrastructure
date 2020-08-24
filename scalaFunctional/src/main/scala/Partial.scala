@@ -1,4 +1,8 @@
+import java.rmi.server.UID
+import java.util.UUID
+
 import scala.annotation.tailrec
+import scala.util.Random
 
 // 引数の部分的適応
 def partial1[A, B, C](a: A, f: (A, B) => C): B => C = {
@@ -358,5 +362,4 @@ object Exercise3s10 {
 //  def flatMap[A, B](as: List[A])(f: A => List[B]): List[B] = {
 //
 //  }
-
 }
