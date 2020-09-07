@@ -22,24 +22,40 @@ object Errorhandling {
 
   // exercise 4.1
   trait Option[+A] {
-    def map[A, B](as: Option[A])(f: A => B): Option[B] = {
-      as match {
+    // thisで対象のOptionオブジェクトを取得する
+    // ↑as: Option[A]を受け取らなくても良くなる
+    def map[B](f: A => B): Option[B] = {
+      this match {
         case None => None
         case Some(value) => Some(f(value))
       }
     }
 
-    def flatMap[A, B](as: Option[A])(f: A => Option[B]): Option[B] = {
-      as match {
+    def flatMap[B](f: A => Option[B]): Option[B] = {
+      this match {
         case None => None
         case Some(value) => f(value)
       }
     }
 
-    def getOrElse[B >: A](as: Option[A])(default: => B): B = {
-      as match {
+    def getOrElse[B >: A](default: => B): B = {
+      this match {
         case None => default
         case Some(value) => value
+      }
+    }
+
+    def orElse[B >: A](ob: => Option[B]): Option[B] = {
+      this match {
+        case None => ob
+        case s @ Some(_) => s
+      }
+    }
+
+    def filter(f: A => Boolean): Option[A] = {
+      this match {
+        case None => None
+        case s @ Some(value) if f(value) => s
       }
     }
   }
