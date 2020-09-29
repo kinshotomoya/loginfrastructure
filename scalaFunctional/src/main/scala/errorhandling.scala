@@ -1,3 +1,5 @@
+import scala.collection.convert.StreamExtensions.AccumulatorFactoryInfo
+
 object Errorhandling {
 
   sealed trait Option[+A] extends Options[A]
@@ -83,4 +85,63 @@ object Errorhandling {
     mean(xs).flatMap(m => mean(xs.map(x => scala.math.pow(x -m, 2))))
   }
 
+  def lift[A, B](f: A => B): Option[A] => Option[B] = _.map(f)
+
+  // exercise 4.3
+  def map2[A, B, C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] = {
+    a.flatMap(x => b.map(y => f(x, y)))
+  }
+
+  // exercise 4.4
+  // List(Some(a), Some(b), Some(c)) => Some(List(a, b, c))
+  def sequence[A](a: List[Option[A]]): Option[List[A]] = {
+    @scala.annotation.tailrec
+    def loop(acc: List[A], list: List[Option[A]]): Option[List[A]] = {
+      list match {
+        case Nil => Some(acc)
+        case head :: tail => head match {
+          case None => None
+          case Some(value) => loop(acc.appended(value), tail)
+        }
+      }
+    }
+    loop(Nil, a)
+  }
+
+  def sequence2[A](a: List[Option[A]]): Option[List[A]] = {
+    a.foldRight[Option[List[A]]](Some(Nil))((x: Option[A], y: Option[List[A]]) => {
+      // xがNoneの場合には、次の初期値がNoneになるので、foldRightListの各値を何回計算してもNoneになる
+      x.flatMap(z => y.map(w => z :: w))
+    })
+  }
+
+
+  // exercise 4.5
+  // リストを一回だけ操作するように実装する
+  def traverse[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] = {
+    a.foldRight[Option[List[B]]](Some(Nil))((x: A, y: Option[List[B]]) => {
+      f(x).flatMap(z => y.map(w => z :: w))
+    })
+  }
+
 }
+
+
+def Try[A](a: => A): Either[Exception, A] = {
+  Left(new Exception)
+//  try Right(a)
+//  catch { case e: Exception => Left(e) }
+}
+
+
+def insuranceRateQuote(age: Int, numberOfSpeedingTickets: Int): Double = ???
+
+def parseInsuranceRateQuote( age: String, numberOfSpeedingTickets: String): Either[Exception,Double] ={
+  for {
+    a <- Try { age.toInt }
+    tickets <- Try { numberOfSpeedingTickets.toInt }
+  } yield {
+    insuranceRateQuote(a, tickets)
+  }
+}
+
