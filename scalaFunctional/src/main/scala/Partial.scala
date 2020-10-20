@@ -362,4 +362,5 @@ object Exercise3s10 {
 //  def flatMap[A, B](as: List[A])(f: A => List[B]): List[B] = {
 //
 //  }
+
 }
