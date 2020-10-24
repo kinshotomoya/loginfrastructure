@@ -74,8 +74,8 @@ trait Stream[+A] {
   // exercise5.5
   def takeWhile(p: A => Boolean): Stream[A] = {
     this match {
-      case Cons(h, t) if p(h()) => cons(h(), t().takeWhile(p))
-      case Empty => empty
+      case Cons(h, t) => if(p(h())) cons(h(), t().takeWhile(p)) else t().takeWhile(p)
+      case _ => Empty
     }
   }
 
@@ -106,11 +106,15 @@ trait Stream[+A] {
     foldRight(false)((a: A, b: Boolean) => if(p(a)) b else false)
   }
 
-  // exercise5.6
-  def headOptionViaFoldRight: Option[A] = {
-    foldRight(None: Option[A])((a, _) => Option(a))
+  // exercise5.5
+  def takeWhileViaFoldRight(p: A => Boolean): Stream[A] = {
+    foldRight(Empty: Stream[A])((x, y) => if(p(x)) cons(x, y) else y)
   }
 
+  // exercise5.6
+  def headOptionViaFoldRight: Option[A] = {
+    foldRight(None: Option[A])((x, _) => Option(x))
+  }
 
   // exercise5.7
   def map[B](f: A => B): Stream[B] = {
@@ -121,7 +125,9 @@ trait Stream[+A] {
     foldRight(Empty: Stream[A])((a, b) => if(f(a)) cons(a, b) else b)
   }
 
+  def append[A](h: => A): Stream[A] = {
 
+  }
 
 
 }
