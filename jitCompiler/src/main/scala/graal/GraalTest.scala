@@ -22,7 +22,7 @@ import scala.io.BufferedSource
 class GraalTest {
 
   // このメソッドを測定対象にする
-  @Benchmark
+//  @Benchmark
   def run = {
     val fileName: String = "GraalTest.txt"
     val encode: String = "UTF-8"
